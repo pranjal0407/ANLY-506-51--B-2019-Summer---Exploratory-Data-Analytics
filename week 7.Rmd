@@ -1,0 +1,255 @@
+---
+title: "week 7"
+author: "pranjal"
+date: "7/28/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#Installing package tidyverse and loading tidyverse
+install.packages("tidyverse")
+library(tidyverse)
+```
+
+
+```{r setup, include=TRUE}
+#mpg contains observations collected by the US Environmental Protection Agency on 38 models of car.
+mpg
+```
+
+
+```{r setup, include=TRUE}
+#sample ggplot
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+#using this as template
+#ggplot(data = <DATA>) + 
+#  <GEOM_FUNCTION>(mapping = aes(<MAPPINGS>))
+```
+
+
+```{r setup, include=TRUE}
+#mapping the colors of points to the class variable to reveal the class of each car.
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, color = class))
+```
+
+```{r setup, include=TRUE}
+#mapping the colors of points to the class variable to reveal the class of each car.
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, size = class))
+```
+
+
+```{r setup, include=TRUE}
+#transparency of the points can be controlled by mapping alpha aesthetic and shape of the points can be controlled by shape aesthetic
+#Graph1
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, alpha = class))
+
+#Graph2
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy, shape = class))
+```
+
+```{r setup, include=TRUE}
+#To change all of the points in our plot blue:
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), color = "blue")
+``` 
+```{r setup, include=TRUE}
+#facet_wrap() is used to facet plot by single variable. First argument is a formula followed by ~
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_wrap(~ class, nrow = 2)
+```
+```{r setup, include=TRUE}
+#facet_grid() is used to facet plot on combination of two variables
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) + 
+  facet_grid(drv ~ cyl)
+```
+
+```{r setup, include=TRUE}
+#geom in plot can be changed by changing the geom function added in the ggplot()
+#displ1
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy))
+
+#displ2
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+```
+```{r setup, include=TRUE}
+#linetype argument can be used to set the linetype of a line
+ggplot(data = mpg) + 
+  geom_smooth(mapping = aes(x = displ, y = hwy, linetype = drv))
+```
+```{r setup, include=TRUE}
+#displ1
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+#displ2              
+ggplot(data = mpg) +
+  geom_smooth(mapping = aes(x = displ, y = hwy, group = drv))
+#displ3
+ggplot(data = mpg) +
+  geom_smooth(
+    mapping = aes(x = displ, y = hwy, color = drv),
+    show.legend = FALSE
+  )
+```
+
+```{r setup, include=TRUE}
+#Multiple geom functions can be added to display to display multiple geoms in same plot
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy)) +
+  geom_smooth(mapping = aes(x = displ, y = hwy))
+```
+
+```{r setup, include=TRUE}
+#set of mappings can be passed to ggplot() to avoid reptition of changing code
+#same plot generated as above
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point() + 
+  geom_smooth()
+```
+```{r setup, include=TRUE}
+#To display different aesthetics in different layers
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = class)) + 
+  geom_smooth()
+```
+```{r setup, include=TRUE}
+#To specify different data for each layer
+ggplot(data = mpg, mapping = aes(x = displ, y = hwy)) + 
+  geom_point(mapping = aes(color = class)) + 
+  geom_smooth(data = filter(mpg, class == "subcompact"), se = FALSE)
+```
+
+```{r setup, include=TRUE}
+#basic bar chart with geom_bar()
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut))
+```
+
+```{r setup, include=TRUE}
+#stat_count an be used instead of geom_bar(). Same bar graph is generated
+ggplot(data = diamonds) + 
+  stat_count(mapping = aes(x = cut))
+```
+
+```{r setup, include=TRUE}
+demo <- tribble(
+  ~cut,         ~freq,
+  "Fair",       1610,
+  "Good",       4906,
+  "Very Good",  12082,
+  "Premium",    13791,
+  "Ideal",      21551
+)
+
+ggplot(data = demo) +
+  geom_bar(mapping = aes(x = cut, y = freq), stat = "identity")
+```
+```{r setup, include=TRUE}
+#bar chart of proportion, rather than count
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, y = ..prop.., group = 1))
+```
+
+
+```{r setup, include=TRUE}
+#stat_summary can be used to summarises the y values for each unique x value
+ggplot(data = diamonds) + 
+  stat_summary(
+    mapping = aes(x = cut, y = depth),
+    fun.ymin = min,
+    fun.ymax = max,
+    fun.y = median
+  )
+```
+
+```{r setup, include=TRUE}
+#bar chart can be coloured using colour or fill
+#displ1
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, colour = cut))
+#displ2
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = cut))
+```
+
+```{r setup, include=TRUE}
+#combination of cut and clarity is represted by each coloured rectangle
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity))
+```
+
+```{r setup, include=TRUE}
+#position = "identity" will place each object exactly where it falls in the context of the graph. 
+#displ1
+ggplot(data = diamonds, mapping = aes(x = cut, fill = clarity)) + 
+  geom_bar(alpha = 1/5, position = "identity")
+#displ2
+ggplot(data = diamonds, mapping = aes(x = cut, colour = clarity)) + 
+  geom_bar(fill = NA, position = "identity")
+```
+
+```{r setup, include=TRUE}
+#position = "fill" works like stacking, but makes each set of stacked bars the same height. 
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "fill")
+```
+
+```{r setup, include=TRUE}
+#position = "dodge" places overlapping objects directly beside one another. 
+ggplot(data = diamonds) + 
+  geom_bar(mapping = aes(x = cut, fill = clarity), position = "dodge")
+```
+
+```{r setup, include=TRUE}
+#position = "jitter" hepls in avoiding gridding
+ggplot(data = mpg) + 
+  geom_point(mapping = aes(x = displ, y = hwy), position = "jitter")
+```
+```{r setup, include=TRUE}
+#coord_flip() switches the x and y axes.
+#displ1
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot()
+#displ2
+ggplot(data = mpg, mapping = aes(x = class, y = hwy)) + 
+  geom_boxplot() +
+  coord_flip()
+```
+```{r setup, include=TRUE}
+#coord_quickmap() sets the aspect ratio correctly for maps
+nz <- map_data("nz")
+
+ggplot(nz, aes(long, lat, group = group)) +
+  geom_polygon(fill = "white", colour = "black")
+
+ggplot(nz, aes(long, lat, group = group)) +
+  geom_polygon(fill = "white", colour = "black") +
+  coord_quickmap()
+```
+
+```{r setup, include=TRUE}
+#coord_polar() uses polar coordinates
+bar <- ggplot(data = diamonds) + 
+  geom_bar(
+    mapping = aes(x = cut, fill = cut), 
+    show.legend = FALSE,
+    width = 1
+  ) + 
+  theme(aspect.ratio = 1) +
+  labs(x = NULL, y = NULL)
+
+#displ1
+bar + coord_flip()
+#displ2
+bar + coord_polar()
+```
